@@ -1,13 +1,31 @@
+import os
+import sys
 import time
+from dotenv import load_dotenv
 from serpapi import GoogleSearch
 import google.generativeai as genai
 
-API_KEY = "daf8b5b7b49a653e8ab557d4b5cab8b3737269703389193f6fd5cad180fe83b8"
+# ── Load environment variables from .env ──
+load_dotenv()
+
+API_KEY = os.getenv("SERPAPI_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 HL = "en"
 PAGE_SIZE = 20
 FETCH_DELAY = 0.8
 
-genai.configure(api_key="AIzaSyAfqz340lsDxBbFoeF2mKZqZS4uEr38Ilk") 
+# ── Fail fast if keys are missing ──
+_missing = []
+if not API_KEY:
+    _missing.append("SERPAPI_KEY")
+if not GEMINI_API_KEY:
+    _missing.append("GEMINI_API_KEY")
+if _missing:
+    print(f"[ERROR] Missing required environment variable(s): {', '.join(_missing)}")
+    print("       Create a .env file from .env.example and add your keys.")
+    sys.exit(1)
+
+genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel(model_name="gemini-2.5-flash")
 
 def fetch_author_results(api_key, author_id, hl="en", page_size=20, delay=1.0):
