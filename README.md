@@ -113,13 +113,6 @@ SERPAPI_KEY=your_serpapi_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-> [!CAUTION]
-> **Security Warning**
-> - **NEVER** commit your `.env` file or real API keys to version control.
-> - The `.gitignore` is pre-configured to exclude `.env`. Always verify before pushing.
-> - If you accidentally expose a key, **rotate it immediately** via the respective provider's dashboard.
-> - Use `.env.example` (with placeholder values only) as the shareable template.
-
 ---
 
 ### 🎨 Frontend Setup
@@ -181,13 +174,6 @@ Publication_Summary_Generator/
             └── api.js       # Centralized API fetch wrappers
 ```
 
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for more information.
-
----
 
 ## 📬 Contact
 
