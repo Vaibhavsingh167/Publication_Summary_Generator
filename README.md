@@ -30,11 +30,6 @@
 
 The tool solves a common pain point for students, academic reviewers, and hiring committees who need to quickly evaluate a researcher's body of work without manually combing through dozens of publications. CurateCite transforms raw bibliometric data into structured visualizations and a readable narrative summary in seconds.
 
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/placeholder-screenshot" alt="CurateCite Dashboard" width="90%" />
-  <br />
-  <em>⬆️ Replace with an actual screenshot of your dashboard</em>
-</p>
 
 ---
 
