@@ -1,4 +1,11 @@
-const API_BASE = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+if (!import.meta.env.VITE_API_URL) {
+  console.warn(
+    "[CurateCite] VITE_API_URL is not set — falling back to http://localhost:5000. " +
+    "Create a .env file in the frontend/ directory with VITE_API_URL=<your-backend-url>."
+  );
+}
 
 /**
  * Analyze an author by their Google Scholar ID.
