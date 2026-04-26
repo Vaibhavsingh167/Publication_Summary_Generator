@@ -1,7 +1,51 @@
 from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
 from logic import fetch_author_results, safe_get, generate_author_summary, API_KEY, HL, PAGE_SIZE, FETCH_DELAY
 
 app = Flask(__name__)
+CORS(app)
+
+
+@app.route("/analyze", methods=["POST"])
+def analyze():
+    data = request.get_json(silent=True)
+    author_id = (data or {}).get("author_id")
+    if not author_id:
+        return jsonify({"error": "Missing author_id"}), 400
+
+    try:
+        raw = fetch_author_results(API_KEY, author_id, hl=HL, page_size=PAGE_SIZE, delay=FETCH_DELAY)
+    except Exception as e:
+        return jsonify({"error": f"Failed to fetch data: {e}"}), 500
+
+    articles = [
+        {
+            "title": safe_get(article, "title", default="No Title"),
+            "link": safe_get(article, "link", default="#"),
+            "year": safe_get(article, "year", default="N/A"),
+            "citations": safe_get(article, "cited_by", "value", default=0),
+        }
+        for article in raw.get("articles", [])
+    ]
+
+    profile = {
+        "id": author_id,
+        "name": safe_get(raw, "author", "name", default="N/A"),
+        "affiliations": safe_get(raw, "author", "affiliations", default="N/A"),
+        "email": safe_get(raw, "author", "email", default="N/A"),
+        "thumbnail": safe_get(raw, "author", "thumbnail", default=""),
+        "interests": [i.get("title") for i in safe_get(raw, "author", "interests", default=[])],
+        "citations_all": safe_get(raw, "cited_by", "table", 0, "citations", "all", default=0),
+        "citations_recent": safe_get(raw, "cited_by", "table", 0, "citations", "since_2020", default=0),
+        "h_index": safe_get(raw, "cited_by", "table", 1, "h_index", "all", default=0),
+        "h_index_recent": safe_get(raw, "cited_by", "table", 1, "h_index", "since_2020", default=0),
+        "i10_index": safe_get(raw, "cited_by", "table", 2, "i10_index", "all", default=0),
+        "i10_index_recent": safe_get(raw, "cited_by", "table", 2, "i10_index", "since_2020", default=0),
+        "open_access_available": safe_get(raw, "public_access", "available", default=0),
+        "open_access_not_available": safe_get(raw, "public_access", "not_available", default=0),
+    }
+
+    return jsonify({"profile": profile, "articles": articles})
 
 @app.route("/", methods=["GET", "POST"])
 def index():
